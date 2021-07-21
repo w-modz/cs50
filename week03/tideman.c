@@ -213,12 +213,11 @@ void print_winner(void)
     {
         for(int j = 0; j < candidate_count - 1; j++)
         {
-            if(locked[j][i])
+            if (locked[j][i])
             {
                 break;
-            }        
+            }
+            printf("%s\n", candidates[i]);
         }
-        printf("%s\n", candidates[i]);
-        return;
     }
 }
