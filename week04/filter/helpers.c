@@ -1,4 +1,8 @@
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include "helpers.h"
 
@@ -79,8 +83,73 @@ void reflect(int32_t height, int32_t width, RGBTRIPLE image[height][width])
     return;
 }
 
+typedef struct
+{
+    RGBTRIPLE color;
+    bool validity;
+} __attribute__((__packed__))
+ADJACENT;
+
 // Blur image
 void blur(int32_t height, int32_t width, RGBTRIPLE image[height][width])
 {
+    RGBTRIPLE(*og_image)[width] = calloc(height, width * sizeof(RGBTRIPLE));
+    if (og_image == NULL)
+    {
+        fprintf(stderr, "Not enough memory to store image copy.\n");
+        return;
+    }
+    memcpy(og_image, image, height * width * sizeof(RGBTRIPLE));
+
+    int32_t adj_count;
+
+    ADJACENT adj[9];
+    for (int32_t h = 0; h < height; h++)
+    {
+        for (int32_t w = 0; w < width; w++)
+        {
+            adj_count = 0;
+            uint8_t RgbBlue = 0;
+            uint8_t RgbGreen = 0;
+            uint8_t RgbRed = 0;
+            int32_t min_height = h - 1;
+            int32_t max_height = h + 1;
+            int32_t min_width = w - 1;
+            int32_t max_width = w + 1;
+
+            int32_t i = 0;
+            for(int32_t h2 = min_height; h2 < max_height; h2++)
+            {
+                for(int32_t w2 = min_width; w2 < max_width; w2++)
+                {
+                    if(h2 < 0 || w2 < 0 || h2 > height - 1 || w2 > width - 1)
+                    {
+                        adj[i].validity = false;
+                        i++;
+                    }
+                    else
+                    {
+                        adj[i].color = og_image[h2][w2];
+                        adj[i].validity = true;
+                        i++;
+                    }
+                }
+            }
+            for (int j = 0; j < 9; j++)
+            {
+                if (adj[j].validity == true)
+                {
+                    RgbBlue = RgbBlue + adj[j].color.rgbtBlue;
+                    RgbGreen = RgbGreen + adj[j].color.rgbtGreen;
+                    RgbRed = RgbRed + adj[j].color.rgbtRed;
+                    adj_count++;
+                }
+            }
+            image[h][w].rgbtBlue = round(RgbBlue / adj_count);
+            image[h][w].rgbtGreen = round(RgbGreen / adj_count);
+            image[h][w].rgbtRed = round(RgbRed / adj_count);
+        }
+    }
+    free(og_image);
     return;
 }
