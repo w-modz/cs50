@@ -13,14 +13,14 @@ void grayscale(int32_t height, int32_t width, RGBTRIPLE image[height][width])
     {
         for (int32_t w = 0; w < width; w++)
         {
-            uint8_t average = (
+            float average = (
                 image[h][w].rgbtBlue +
                 image[h][w].rgbtGreen +
                 image[h][w].rgbtRed
             ) / 3;
-            image[h][w].rgbtBlue = average;
-            image[h][w].rgbtGreen = average;
-            image[h][w].rgbtRed = average;
+            image[h][w].rgbtBlue = (uint8_t) average;
+            image[h][w].rgbtGreen = (uint8_t) average;
+            image[h][w].rgbtRed = (uint8_t) average;
         }
     }
     return;
@@ -147,9 +147,9 @@ void blur(int32_t height, int32_t width, RGBTRIPLE image[height][width])
                 }
             }
 
-            image[h][w].rgbtBlue = (uint8_t) round(blue / adjCount);
-            image[h][w].rgbtGreen = (uint8_t) round(green / adjCount);
-            image[h][w].rgbtRed = (uint8_t) round(red / adjCount);
+            image[h][w].rgbtBlue = (uint8_t) round(blue /(float) adjCount);
+            image[h][w].rgbtGreen = (uint8_t) round(green /(float) adjCount);
+            image[h][w].rgbtRed = (uint8_t) round(red /(float) adjCount);
         }
     }
 
