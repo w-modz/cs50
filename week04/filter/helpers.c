@@ -133,9 +133,9 @@ void blur(int32_t height, int32_t width, RGBTRIPLE image[height][width])
             }
 
             int32_t adjCount = 0;
-            uint8_t blue = 0;
-            uint8_t green = 0;
-            uint8_t red = 0;
+            uint32_t blue = 0;
+            uint32_t green = 0;
+            uint32_t red = 0;
             for (int32_t i = 0; i < 9; i++)
             {
                 if (adj[i].isValid)
@@ -147,9 +147,9 @@ void blur(int32_t height, int32_t width, RGBTRIPLE image[height][width])
                 }
             }
 
-            image[h][w].rgbtBlue = round(blue / adjCount);
-            image[h][w].rgbtGreen = round(green / adjCount);
-            image[h][w].rgbtRed = round(red / adjCount);
+            image[h][w].rgbtBlue = (uint8_t) round(blue / adjCount);
+            image[h][w].rgbtGreen = (uint8_t) round(green / adjCount);
+            image[h][w].rgbtRed = (uint8_t) round(red / adjCount);
         }
     }
 
