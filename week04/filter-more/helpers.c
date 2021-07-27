@@ -1,9 +1,13 @@
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "helpers.h"
+
+#define ERR_OUT_OF_MEMORY -1
+
+RGBTRIPLE** copy_image(int height, int width, RGBTRIPLE image[height][width]);
 
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
@@ -41,14 +45,7 @@ horizontal;
 // Detect edges
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
-    // Make a copy of the original image
-    RGBTRIPLE(*og_image)[width] = calloc(height, width * sizeof(RGBTRIPLE));
-    if (og_image == NULL)
-    {
-        fprintf(stderr, "Not enough memory to store image copy.\n");
-        return;
-    }
-    memcpy(og_image, image, height * width * sizeof(RGBTRIPLE));
+    RGBTRIPLE** ogImage = copy_image(height, width, image);
 
     RGBTRIPLE adj[9];
     for(int32_t h = 0; h < height; h++)
@@ -84,7 +81,7 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                     }
                     else
                     {
-                        adj[adjIndex] = og_image[h2][w2];
+                        adj[adjIndex] = ogImage[h2][w2];
                     }
 
                     if(adjIndex == 0)
@@ -200,6 +197,29 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
         }
     }
 
-    free(og_image);
+    free(ogImage);
     return;
+}
+
+RGBTRIPLE** copy_image(int height, int width, RGBTRIPLE image[height][width])
+{
+    RGBTRIPLE** copy = NULL;
+    if (!(copy = (RGBTRIPLE**) calloc(height, sizeof(RGBTRIPLE))))
+    {
+        fprintf(stderr, "Not enough memory to store image copy.\n");
+        exit(ERR_OUT_OF_MEMORY);
+    }
+
+    for (uint32_t row = 0; row < width; row++)
+    {
+        if (!(copy[row] = (RGBTRIPLE*) calloc(width, sizeof(RGBTRIPLE))))
+        {
+            fprintf(stderr, "Not enough memory to store image copy.\n");
+            free(copy);
+            exit(ERR_OUT_OF_MEMORY);
+        }
+        memcpy(copy[row], image[row], width * sizeof(RGBTRIPLE));
+    }
+
+    return copy;
 }
