@@ -5,6 +5,24 @@
 
 #include "helpers.h"
 
+const int GxKernel[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+const int GyKernel[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
+
+typedef struct
+{
+    float red;
+    float green;
+    float blue;
+}
+vertical;
+typedef struct
+{
+    float red;
+    float green;
+    float blue;
+}
+horizontal;
+
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
 {
@@ -22,21 +40,6 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 {
     return;
 }
-
-typedef struct
-{
-    float red;
-    float green;
-    float blue;
-}
-vertical;
-typedef struct
-{
-    float red;
-    float green;
-    float blue;
-}
-horizontal;
 
 // Detect edges
 void edges(int height, int width, RGBTRIPLE image[height][width])
@@ -68,9 +71,13 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
             Gy.red = 0;
             Gy.green = 0;
             Gy.blue = 0;
+ 
 
             // Traverse the 3x3 grid of adjacent pixels and calculate Gx and Gy
             int32_t adjIndex = 0;
+            int32_t index1 = 0;
+            int32_t index2 = 0;
+
             for (int32_t h2 = min_height; h2 <= max_height; h2++)
             {
                 for (int32_t w2 = min_width; w2 <= max_width; w2++)
@@ -87,88 +94,22 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                         adj[adjIndex] = og_image[h2][w2];
                     }
 
-                    if(adjIndex == 0)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * -1;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * -1;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * -1;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * -1;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * -1;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * -1;
-                    }
-                    else if(adjIndex == 1)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * 0;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * 0;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * 0;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * -2;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * -2;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * -2;
-                    }
-                    else if(adjIndex == 2)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * 1;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * 1;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * 1;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * -1;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * -1;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * -1;
-                    }
-                    else if(adjIndex == 3)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * -2;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * -2;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * -2;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * 0;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * 0;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * 0;
-                    } 
-                    else if(adjIndex == 4)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * 0;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * 0;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * 0;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * 0;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * 0;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * 0;
-                    }
-                    else if(adjIndex == 5)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * 2;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * 2;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * 2;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * 0;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * 0;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * 0;
-                    }
-                    else if(adjIndex == 6)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * -1;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * -1;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * -1;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * 1;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * 1;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * 1;
-                    }
-                    else if(adjIndex == 7)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * 0;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * 0;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * 0;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * 2;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * 2;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * 2;
-                    }
-                    else if(adjIndex == 8)
-                    {
-                        Gx.red += (int32_t) adj[adjIndex].rgbtRed * 1;
-                        Gx.green += (int32_t) adj[adjIndex].rgbtGreen * 1;
-                        Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * 1;
-                        Gy.red += (int32_t) adj[adjIndex].rgbtRed * 1;
-                        Gy.green += (int32_t) adj[adjIndex].rgbtGreen * 1;
-                        Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * 1;
-                    }
+                    Gx.red += (int32_t) adj[adjIndex].rgbtRed * GxKernel[index2][index1];
+                    Gx.green += (int32_t) adj[adjIndex].rgbtGreen * GxKernel[index2][index1];
+                    Gx.blue += (int32_t) adj[adjIndex].rgbtBlue * GxKernel[index2][index1];
+                    Gy.red += (int32_t) adj[adjIndex].rgbtRed * GyKernel[index2][index1];
+                    Gy.green += (int32_t) adj[adjIndex].rgbtGreen * GyKernel[index2][index1];
+                    Gy.blue += (int32_t) adj[adjIndex].rgbtBlue * GyKernel[index2][index1];
                     adjIndex++;
+                    if(index1 == 2)
+                    {
+                        index1 = 0;
+                        index2++;
+                    }
+                    else
+                    {
+                        index1++;
+                    }
                     // Calculate the final color values for the pixel
                     int32_t Red;
                     int32_t Green;
