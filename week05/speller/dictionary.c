@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #include "dictionary.h"
 
@@ -25,7 +26,15 @@ unsigned int tableSize = 0;
 // Returns true if word is in dictionary, else false
 bool check(const char *word)
 {
-    // TODO
+    node *currentNode = table[0];
+    while (currentNode)
+    {
+        if (strcasecmp(word, currentNode->word) == 0)
+        {
+            return true;
+        }
+        currentNode = currentNode->next;
+    }
     return false;
 }
 
@@ -48,12 +57,18 @@ bool load(const char *dictionary)
 
     char *line = NULL;
     unsigned long len = 0;
+    int lineLength = 0;
     table[0] = (node *)malloc(sizeof(node));
     node *lastNode = table[0];
     while ((getline(&line, &len, file)) != -1)
     {
         tableSize++;
-        memcpy(lastNode->word, line, strlen(line));
+        lineLength = strlen(line);
+
+        // Remove newline character from the line.
+        line[lineLength - 1] = '\0';
+
+        memcpy(lastNode->word, line, lineLength - 1);
         lastNode->next = (node *)malloc(sizeof(node));
         lastNode = lastNode->next;
     }

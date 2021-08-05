@@ -3,3 +3,4 @@ baz
 fizz
 buzz
 fizz buzz
+cat
