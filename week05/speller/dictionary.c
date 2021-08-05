@@ -1,6 +1,10 @@
 // Implements a dictionary's functionality
+#define _GNU_SOURCE
 
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "dictionary.h"
 
@@ -9,14 +13,14 @@ typedef struct node
 {
     char word[LENGTH + 1];
     struct node *next;
-}
-node;
+} node;
 
 // Number of buckets in hash table
 const unsigned int N = 1;
 
 // Hash table
 node *table[N];
+unsigned int tableSize = 0;
 
 // Returns true if word is in dictionary, else false
 bool check(const char *word)
@@ -28,27 +32,51 @@ bool check(const char *word)
 // Hashes word to a number
 unsigned int hash(const char *word)
 {
-    // TODO
+    // There's only one bucket, return it's index.
     return 0;
 }
 
 // Loads dictionary into memory, returning true if successful, else false
 bool load(const char *dictionary)
 {
-    // TODO
-    return false;
+    FILE *file = fopen(dictionary, "r");
+    if (!file)
+    {
+        fprintf(stderr, "Could not open file: %s\n", dictionary);
+        exit(1);
+    }
+
+    char *line = NULL;
+    unsigned long len = 0;
+    table[0] = (node *)malloc(sizeof(node));
+    node *lastNode = table[0];
+    while ((getline(&line, &len, file)) != -1)
+    {
+        tableSize++;
+        memcpy(lastNode->word, line, strlen(line));
+        lastNode->next = (node *)malloc(sizeof(node));
+        lastNode = lastNode->next;
+    }
+
+    return true;
 }
 
 // Returns number of words in dictionary if loaded, else 0 if not yet loaded
 unsigned int size(void)
 {
-    // TODO
-    return 0;
+    return tableSize;
 }
 
 // Unloads dictionary from memory, returning true if successful, else false
 bool unload(void)
 {
-    // TODO
-    return false;
+    node *current = table[0];
+    node *next = NULL;
+    while (current)
+    {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    return true;
 }
