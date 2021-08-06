@@ -1,2 +1,4 @@
 # Compilation by-products
 *.dSYM/
+
+.DS_Store
