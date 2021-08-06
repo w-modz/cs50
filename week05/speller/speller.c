@@ -51,11 +51,11 @@ int main(int argc, char *argv[])
     time_load = calculate(&before, &after);
 
     // Try to open text
-    char *textFile = (argc == 3) ? argv[2] : argv[1];
-    FILE *file = fopen(textFile, "r");
+    char *text = (argc == 3) ? argv[2] : argv[1];
+    FILE *file = fopen(text, "r");
     if (file == NULL)
     {
-        printf("Could not open %s.\n", textFile);
+        printf("Could not open %s.\n", text);
         unload();
         return 1;
     }
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
     if (ferror(file))
     {
         fclose(file);
-        printf("Error reading %s.\n", textFile);
+        printf("Error reading %s.\n", text);
         unload();
         return 1;
     }
