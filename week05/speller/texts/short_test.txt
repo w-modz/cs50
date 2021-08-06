@@ -1,0 +1,7 @@
+cat
+foo bar
+baz
+fizz
+buzz
+fizz buzz
+cat
