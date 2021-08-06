@@ -1,6 +1,7 @@
 // Implements a dictionary's functionality
 #define _GNU_SOURCE
 
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,7 +51,7 @@ unsigned int hash(const char *word)
     const unsigned int wordLength = strlen(word);
     for (hash = i = 0; i < wordLength; ++i)
     {
-        hash += word[i];
+        hash += tolower(word[i]);
         hash += (hash << 10);
         hash ^= (hash >> 6);
     }
@@ -74,7 +75,6 @@ bool load(const char *dictionary)
 
     node *lastNode;
     unsigned int bucketIndex;
-    const char *word;
     while ((getline(&line, &len, file)) != -1)
     {
         tableSize++;
@@ -101,6 +101,9 @@ bool load(const char *dictionary)
 
         memcpy(lastNode->word, line, strlen(line));
     }
+
+    free(line);
+    fclose(file);
     return true;
 }
 
