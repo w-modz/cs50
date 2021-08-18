@@ -1,11 +1,11 @@
 from cs50 import get_int
 
-answer = 9
-while answer < 1 or answer > 8:
-    answer = get_int('Height: ')
-index = 0
-while answer > 0:
-    print(' ' * (answer - 1), end='')
-    print('#' * (index + 1))
-    index += 1
-    answer -= 1
+height = 9
+while height < 1 or height > 8:
+    height = get_int('Height: ')
+row = 0
+while height > 0:
+    print(' ' * (height - 1), end='')
+    print('#' * (row + 1))
+    row += 1
+    height -= 1
