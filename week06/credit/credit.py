@@ -4,26 +4,25 @@ from cs50 import get_string
 def main():
     number = get_string('Provide card number: ')
     card_number = parse_card_number(number)
+    length = len(card_number)
     # Store credit card length in a variable
-    global ccn_length
-    ccn_length = len(card_number)
 
-    if is_visa(card_number):
-        if validate(card_number):
+    if is_visa(card_number, length):
+        if validate(card_number, length):
             print('VISA')
             return
         else:
             print('INVALID')
             return
-    elif is_amex(card_number):
-        if validate(card_number):
+    elif is_amex(card_number, length):
+        if validate(card_number, length):
             print('AMEX')
             return
         else:
             print('INVALID')
             return
-    elif is_mastercard(card_number):
-        if validate(card_number):
+    elif is_mastercard(card_number, length):
+        if validate(card_number, length):
             print('MASTERCARD')
             return
         else:
@@ -42,20 +41,20 @@ def parse_card_number(number):
     return card_number
 
 
-def is_visa(card: list[int]) -> bool:
-    return card[0] == 4 and (ccn_length == 16 or ccn_length == 13)
+def is_visa(card: list[int], length) -> bool:
+    return card[0] == 4 and (length == 16 or length == 13)
 
 
-def is_amex(card: list[int]) -> bool:
-    return card[0] == 3 and (card[1] == 4 or card[1] == 7) and ccn_length == 15
+def is_amex(card: list[int], length) -> bool:
+    return card[0] == 3 and (card[1] == 4 or card[1] == 7) and length == 15
 
 
-def is_mastercard(card: list[int]) -> bool:
+def is_mastercard(card: list[int], length) -> bool:
     return card[0] == 5 and (card[1] == 1 or card[1] == 2 or card[1] == 3 or card[1] == 4 or card[1] == 5) and \
-           ccn_length == 16
+           length == 16
 
 
-def validate(cardnumber):
+def validate(cardnumber: list[int], length: int) -> bool:
     cardnumber_len = len(cardnumber)
     index = cardnumber_len / 2
     position = 1
@@ -72,15 +71,13 @@ def validate(cardnumber):
         sum = int(sum)
     reverse = 1
     while True:
-        if reverse > ccn_length:
+        if reverse > length:
             break
         sum += cardnumber[-reverse]
         reverse += 2
-    print(int(sum))
     if sum % 10 == 0:
         return True
     else:
-        print('here')
         return False
 
 
