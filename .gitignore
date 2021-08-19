@@ -1,5 +1,7 @@
 # Compilation by-products
 *.dSYM/
+.pytest_cache/
+__pycache__/
 
 .idea/
 
