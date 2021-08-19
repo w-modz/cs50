@@ -1,12 +1,13 @@
 from cs50 import get_string
 
-text = get_string('Input text: ')
+text: str = ''
+while len(text) < 1:
+    text = get_string('Input text: ')
 sentenceCount = 1
 wordCount = 1
 letterCount = 1
 
-index = 0
-while index < (len(text) - 1):
+for index in range(len(text) - 1):
     if text[index].isalpha():
         letterCount += 1
     elif text[index].isspace():
