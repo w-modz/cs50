@@ -14,5 +14,4 @@ change += int(owed / 0.05)
 owed %= 0.05
 owed = round(owed, 2)
 change += int(owed / 0.01)
-owed %= 0.01
 print(change)
