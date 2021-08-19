@@ -1,0 +1,31 @@
+# Workflow based on the following GitHub article:
+# https://docs.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions
+name: Python
+
+on:
+  push:
+    paths:
+      - '.github/workflows/python-test.yml'
+      - '**.py'
+
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt
+
+      - name: Test with Pytest
+        run: |
+          python3 -m pytest -vv -s
