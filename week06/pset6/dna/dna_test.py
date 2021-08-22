@@ -1,10 +1,7 @@
 import sys
-
 import pytest
-from dna import repeats
-from dna import check_arguments
-from dna import compare
-from dna import main
+import dna
+import subprocess
 
 
 @pytest.mark.parametrize('argv, expected', [
@@ -16,19 +13,19 @@ from dna import main
     (['dna/dna.py', "foo"], False),
 ])
 def test_check_arguments(argv: list[str], expected: bool) -> None:
-    result = check_arguments(argv)
+    result = dna.check_arguments(argv)
     assert result == expected
 
 
 #TODO: fix test for repeats()
-@pytest.mark.parametrize('STR, dna, expected', [
-    (['AGATC'], ['AGATCAGATCAGATC\n'], 3),
-    (['AATG'], ['AATGAATGTATC\n'], 2),
-    (['AATG'], ['AATGTATCAATGAATGTATCAATG\n'], 2),
-    (['TATC'], ['AGATCAATG\n'], 0),
+@pytest.mark.parametrize('STR, dna_sequence, expected', [
+    ('AGATC', 'AGATCAGATCAGATC', 3),
+    ('AATG', 'AATGAATGTATC', 2),
+    ('AATG', 'AATGTATCAATGAATGTATCAATG', 2),
+    ('TATC', 'AGATCAATG', 0),
 ])
-def test_repeats(STR: str, dna: str, expected: int) -> None:
-    result = repeats(STR, dna)
+def test_get_consecutive_repeats(STR: str, dna_sequence: str, expected: int) -> None:
+    result = dna.get_consecutive_repeats(STR, dna_sequence)
     assert result == expected
 
 
@@ -38,8 +35,8 @@ def test_repeats(STR: str, dna: str, expected: int) -> None:
      {'name': 'Fred', 'AGATC': '37', 'TTTTTTCT': '40', 'AATG': '10', 'TCTAG': '6', 'GATA': '5', 'TATC': '10',
       'GAAA': '28', 'TCTG': '8'}, True),
 ])
-def test_compare(STR_names: list[str], STR_count: dict, row, expected: bool) -> None:
-    result = compare(STR_names, STR_count, row)
+def test_compare_dna_sequences(STR_names: list[str], STR_count: dict, row: dict, expected: bool) -> None:
+    result = dna.compare_dna_sequences(STR_names, STR_count, row)
     assert result == expected
 
 
@@ -47,7 +44,9 @@ def test_compare(STR_names: list[str], STR_count: dict, row, expected: bool) -> 
 @pytest.mark.parametrize('argv, expected', [
     (['C:/Users/vitom/Documents/programming/cs50/week06/pset6/dna/dna.py', 'databases/large.csv', 'sequences/19.txt'], 'Fred'),
 ])
-def test_main(argv: list[str], expected: str) -> None:
+def test_output(argv: list[str], expected: str) -> None:
     sys.argv = argv
-    result = main()
-    assert result == expected
+    exec('dna')
+    subprocess = subprocess.Popen("dna.py", shell=True, stdout=subprocess.PIPE)
+    subprocess_return = subprocess.stdout.read()
+    assert subprocess_return == expected

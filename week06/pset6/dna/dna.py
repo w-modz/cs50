@@ -13,9 +13,9 @@ def main() -> str:
     dna_file.close()
     STR_count = {}
     for STR in STR_names:
-        STR_count[STR] = repeats(STR, dna_sequence)
+        STR_count[STR] = get_consecutive_repeats(STR, dna_sequence)
     for row in data_reader:
-        if compare(STR_names, STR_count, row):
+        if compare_dna_sequences(STR_names, STR_count, row):
             dna_database.close()
             return f'{row["name"]}'
     dna_database.close()
@@ -26,14 +26,14 @@ def check_arguments(argv: list[str]) -> bool:
     return len(argv) == 3
 
 
-def repeats(STR: str, dna: str) -> int:
+def get_consecutive_repeats(STR: str, dna: str) -> int:
     index = 0
     while (index + 1) * STR in dna:
         index += 1
     return index
 
 
-def compare(STR_names: list[str], STR_count: dict, row) -> bool:
+def compare_dna_sequences(STR_names: list[str], STR_count: dict, row: dict) -> bool:
     for STR in STR_names:
         if int(row[STR]) != STR_count[STR]:
             return False
