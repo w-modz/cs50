@@ -1,43 +1,45 @@
 import csv
 import sys
 
+from ShortTandemRepeats import ShortTandemRepeats
 
-def main() -> str:
+
+def main() -> None:
     if not check_arguments(sys.argv):
-        return "Usage: dna.py <STR counts path> <DNA sequence path>"
-    dna_database = open(sys.argv[1])
-    dna_file = open(sys.argv[2])
-    data_reader = csv.DictReader(dna_database)
-    STR_names = data_reader.fieldnames[1:]
-    dna_sequence = dna_file.read()
-    dna_file.close()
-    STR_count = {}
-    for STR in STR_names:
-        STR_count[STR] = get_consecutive_repeats(STR, dna_sequence)
-    for row in data_reader:
-        if compare_dna_sequences(STR_names, STR_count, row):
-            dna_database.close()
-            return f'{row["name"]}'
-    dna_database.close()
-    return "No match found"
+        print("Usage: dna.py <STR counts path> <DNA sequence path>")
+        sys.exit(1)
+
+    dna_database, str_labels = read_dna_database(sys.argv[1])
+    dna_sequence = read_dna_sequence(sys.argv[2])
+    searched = ShortTandemRepeats.from_sequence(str_labels, dna_sequence)
+
+    print(find_match(searched, dna_database))
 
 
 def check_arguments(argv: list[str]) -> bool:
     return len(argv) == 3
 
 
-def get_consecutive_repeats(STR: str, dna: str) -> int:
-    index = 0
-    while (index + 1) * STR in dna:
-        index += 1
-    return index
+def read_dna_database(file_path: str) -> tuple[list[ShortTandemRepeats], list[str]]:
+    with open(file_path) as dna_database:
+        reader = csv.DictReader(dna_database)
+        strs = []
+        for row in reader:
+            strs.append(ShortTandemRepeats(row))
+        return strs, reader.fieldnames[1:]
 
 
-def compare_dna_sequences(STR_names: list[str], STR_count: dict, row: dict) -> bool:
-    for STR in STR_names:
-        if int(row[STR]) != STR_count[STR]:
-            return False
-        return True
+def read_dna_sequence(file_path: str) -> str:
+    with open(file_path) as dna_file:
+        return dna_file.read()
 
 
-print(main())
+def find_match(searched: ShortTandemRepeats, database: list[ShortTandemRepeats]) -> str:
+    for person in database:
+        if searched == person:
+            return f"{person['name']}"
+    return 'No match found'
+
+
+if __name__ == "__main__":
+    main()
