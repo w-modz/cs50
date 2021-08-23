@@ -36,7 +36,7 @@ def read_dna_sequence(file_path: str) -> str:
 
 def find_match(searched: ShortTandemRepeats, database: list[ShortTandemRepeats]) -> str:
     for person in database:
-        if searched == person:
+        if searched.equals_ignoring_name(person):
             return f"{person['name']}"
     return 'No match found'
 

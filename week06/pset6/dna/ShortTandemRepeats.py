@@ -21,11 +21,14 @@ class ShortTandemRepeats:
         return hash(self._value)
 
     def __eq__(self, other) -> bool:
-        return isinstance(other, ShortTandemRepeats) \
-               and are_dicts_equal_ignoring_keys(self._value, other._value, {'name'})
+        return isinstance(other, ShortTandemRepeats) and self._value == other._value
 
     def __str__(self) -> str:
         return str(self._value)
+
+    def equals_ignoring_name(self, other) -> bool:
+        return isinstance(other, ShortTandemRepeats) \
+               and are_dicts_equal_ignoring_keys(self._value, other._value, {'name'})
 
     @staticmethod
     def from_sequence(str_labels: list[str], dna_sequence: str):
