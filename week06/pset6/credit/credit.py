@@ -81,4 +81,5 @@ def validate(cardnumber: list[int], length: int) -> bool:
         return False
 
 
-main()
+if __name__ == "__main__":
+    main()

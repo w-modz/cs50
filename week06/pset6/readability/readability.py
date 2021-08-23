@@ -15,4 +15,5 @@ def main():
         print('Grade 16+')
 
 
-main()
+if __name__ == "__main__":
+    main()
