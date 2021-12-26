@@ -1,0 +1,1 @@
+select distinct name from people join stars on stars.person_id = http://people.id where movie_id in (select movie_id from stars join people on http://people.id = stars.person_id where name = 'Kevin Bacon' and birth = 1958) and name != 'Kevin Bacon';
